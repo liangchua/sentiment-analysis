@@ -16,14 +16,15 @@ from PIL import Image
 logo = Image.open('logo.png')
 
 PRODUCT_REVIEWS_PATH = os.path.join(os.getcwd(), 'product-reviews.csv')
-
+SOCMED_PATH = os.path.join(os.getcwd(), 'socmed-tweets.csv')
+POLITIC_PATH = os.path.join(os.getcwd(), 'politic-uk.csv')
+EMPLOYEE_PATH = os.path.join(os.getcwd(), 'employee-feedback.csv')
+HEALTHCARE_PATH = os.path.join(os.getcwd(), 'healthcare-depression.csv')
 
 # # resize images
 # with Image.open('bg6.png') as im:
 #     resized_im = im.resize((1920, 1080))
 #     resized_im.save('bg6-resized.png')
-
-# simple, brand, customer, market, politics, healtcare
 
 
 #%% Functions
@@ -185,8 +186,6 @@ with tabs[1]:
         data = data[['brand','categories','reviews.text']][:50]
         
         st.table(data.head())
-        
-        
 
 
 #%% Tab 3: Social Media
@@ -194,18 +193,35 @@ with tabs[1]:
 with tabs[2]:
     
     Info().tab2_info()
+    
+    data = pd.read_csv(SOCMED_PATH, encoding='unicode_escape')
+    data = data[:50]
+    
+    st.table(data.head())
+
 
 #%% Tab 4: Political 
 
 with tabs[3]:
     
     Info().tab3_info()
+    
+    data = pd.read_csv(POLITIC_PATH)
+    data = data[:50]
+    
+    st.table(data.head())
+
 
 #%% Tab 5: Employee 
 
 with tabs[4]:
     
     Info().tab4_info()
+    
+    data = pd.read_csv(EMPLOYEE_PATH, encoding='unicode_escape')
+    data = data[:50]
+    
+    st.table(data.head())
 
 
 #%% Tab 6: Healthcare
@@ -213,6 +229,11 @@ with tabs[4]:
 with tabs[5]:
     
     Info().tab5_info()
+    
+    data = pd.read_csv(HEALTHCARE_PATH, encoding='unicode_escape')
+    data = data[:50]
+    
+    st.table(data.head())
 
 
 
