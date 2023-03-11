@@ -152,7 +152,6 @@ with tabs[0]:
     
     if st.button('Run Analysis'):
         with st.spinner('In progress ...'):
-            # time.sleep(2)
             label, score = models(selected_model, text)
             st.success('Done!')
             st.write(label, score)
@@ -164,76 +163,127 @@ with tabs[0]:
 
 with tabs[1]:
     
-    Info().tab1_info()
-    
-    options = st.selectbox('Choose to upload dataset or preview using sample dataset',
-                           ['upload dataset','sample dataset'])
-    if options == 'upload dataset':
-        uploaded_data = st.file_uploader('Upload data here')
+    try:
+        Info().tab1_info()
         
-        if uploaded_data:
-            upload_select = st.radio('Select a model',['DistilBERT','TextBlob',
-                                                      'Vader','Pattern'], horizontal=True)
-            st.write(' ')
-            
-            
-            
-    else:
-        sample_select = st.radio('Choose a model',['DistilBERT','TextBlob',
-                                                  'Vader','Pattern'], horizontal=True)
+        options = st.selectbox('Choose to upload product review dataset or preview using sample dataset',
+                               ['upload dataset','sample dataset'])
         
-        data = pd.read_csv(PRODUCT_REVIEWS_PATH, encoding='unicode_escape')
-        data = data[['brand','categories','reviews.text']][:50]
+        if options == 'upload dataset':
+            uploaded_data = st.file_uploader('Upload data here')
+            data = pd.read_csv(uploaded_data, encoding='unicode_escape')
+        else:
+            data = pd.read_csv(PRODUCT_REVIEWS_PATH, encoding='unicode_escape')
+            data = data[['brand','categories','reviews.text']][:50]
         
+        st.write(' ')
+        sample_select = st.radio('Choose a model for product reviews sentiment analysis',
+                                 ['DistilBERT','TextBlob','Vader','Pattern'], horizontal=True)
+        st.write(' ')
         st.table(data.head())
+    except:
+        st.info('Please upload a dataset')
 
 
 #%% Tab 3: Social Media
 
 with tabs[2]:
     
-    Info().tab2_info()
-    
-    data = pd.read_csv(SOCMED_PATH, encoding='unicode_escape')
-    data = data[:50]
-    
-    st.table(data.head())
+    try:
+        Info().tab2_info()
+        
+        options = st.selectbox('Choose to upload social media dataset or preview using sample dataset',
+                               ['upload dataset','sample dataset'])
+        
+        if options == 'upload dataset':
+            uploaded_data = st.file_uploader('Upload data here')
+            data = pd.read_csv(uploaded_data, encoding='unicode_escape')
+        else:
+            data = pd.read_csv(SOCMED_PATH, encoding='unicode_escape')
+            data = data[:50]
+        
+        st.write(' ')
+        sample_select = st.radio('Choose a model for social media sentiment analysis',
+                                 ['DistilBERT','TextBlob','Vader','Pattern'], horizontal=True)
+        st.write(' ')
+        st.table(data.head())
+    except:
+        st.info('Please upload a dataset')
 
 
 #%% Tab 4: Political 
 
 with tabs[3]:
     
-    Info().tab3_info()
-    
-    data = pd.read_csv(POLITIC_PATH)
-    data = data[:50]
-    
-    st.table(data.head())
+    try:
+        Info().tab3_info()
+        
+        options = st.selectbox('Choose to upload political dataset or preview using sample dataset',
+                               ['upload dataset','sample dataset'])
+        
+        if options == 'upload dataset':
+            uploaded_data = st.file_uploader('Upload data here')
+            data = pd.read_csv(uploaded_data, encoding='unicode_escape')
+        else:
+            data = pd.read_csv(POLITIC_PATH)
+            data = data[:50]
+        st.write(' ')
+        sample_select = st.radio('Choose a model for political sentiment analysis',
+                                 ['DistilBERT','TextBlob','Vader','Pattern'], horizontal=True)
+        st.write(' ')
+        st.table(data.head())
+    except:
+        st.info('Please upload a dataset')
 
 
 #%% Tab 5: Employee 
 
 with tabs[4]:
     
-    Info().tab4_info()
-    
-    data = pd.read_csv(EMPLOYEE_PATH, encoding='unicode_escape')
-    data = data[:50]
-    
-    st.table(data.head())
+    try:
+        Info().tab4_info()
+        
+        options = st.selectbox('Choose to upload employee feedback dataset or preview using sample dataset',
+                               ['upload dataset','sample dataset'])
+        
+        if options == 'upload dataset':
+            uploaded_data = st.file_uploader('Upload data here')
+            data = pd.read_csv(uploaded_data, encoding='unicode_escape')
+        else:
+            data = pd.read_csv(EMPLOYEE_PATH, encoding='unicode_escape')
+            data = data[:50]
+        st.write(' ')
+        sample_select = st.radio('Choose a model for employee feedback sentiment analysis',
+                                 ['DistilBERT','TextBlob','Vader','Pattern'], horizontal=True)
+        st.write(' ')
+        st.table(data.head())
+    except:
+        st.info('Please upload a dataset')
 
 
 #%% Tab 6: Healthcare
 
 with tabs[5]:
     
-    Info().tab5_info()
-    
-    data = pd.read_csv(HEALTHCARE_PATH, encoding='unicode_escape')
-    data = data[:50]
-    
-    st.table(data.head())
+    try:
+        Info().tab5_info()
+        
+        options = st.selectbox('Choose to upload healthcare dataset or preview using sample dataset',
+                               ['upload dataset','sample dataset'])
+        
+        if options == 'upload dataset':
+            uploaded_data = st.file_uploader('Upload data here')
+            data = pd.read_csv(uploaded_data, encoding='unicode_escape')
+        else:
+            data = pd.read_csv(HEALTHCARE_PATH, encoding='unicode_escape')
+            data = data[:50]
+        st.write(' ')
+        sample_select = st.radio('Choose a model for healthcare sentiment analysis',
+                                 ['DistilBERT','TextBlob','Vader','Pattern'], horizontal=True)
+        st.write(' ')
+        st.table(data.head())
+    except:
+        st.info('Please upload a dataset')
 
 
 
