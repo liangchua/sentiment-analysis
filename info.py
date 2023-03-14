@@ -26,14 +26,16 @@ class Info:
                         of data, providing accurate insights into customer sentiment\
                         and improving decision-making in various industris such as \
                         marketing, finance and politics.\
-                        There are total of 5 tabs created in this project. The "testing"\
-                        tab allow users to try on each sentiment analysis model, while the\
-                        other four tabs are the sample use cases of sentiment analysis such\
-                        as "Product Review", "Social Media", "Political Sentiment Analysis"\
-                        , "Employee Feedback Analysis" and "Healthcare Reviews Analysis".* ####
+                        There are total of 2 tabs created in this project. The "Analytics"\
+                        allow users to upload a dataset to run the sentiment analysis. Besides,\
+                        users can choose the sample datasets for preview, which includes\
+                        "Product Review", "Social Media", "Political Sentiment Analysis"\
+                        , "Employee Feedback Analysis" and "Healthcare Reviews Analysis".\
+                        The another tab allow users to play with different sentiment analysis\
+                        algorithms by just typing a random sentence.* ####
                     ''')
     
-    def tab1_info(self):
+    def prod_info(self):
         
         st.info('**Potential Analysis:**\
                 Business could analyze customer feedback to identify common themes\
@@ -46,7 +48,7 @@ class Info:
                 in customer feedback, businesses could take targeted action to improve\
                 product quality and overall customer satisfaction.')
     
-    def tab2_info(self):
+    def socmed_info(self):
         
         st.info('**Potential Analysis:**\
                 Businesses or organizations could analyze public sentiment about their\
@@ -60,7 +62,7 @@ class Info:
                 media, businesses can better understand customer perceptions and take\
                 targeted action to improve brand reputation and customer satisfaction.')
     
-    def tab3_info(self):
+    def politic_info(self):
         
         st.info('**Potential Analysis**\
                 Political campaigns or organizations could analyze public sentiment\
@@ -75,7 +77,7 @@ class Info:
                 understand public perceptions and take targeted action to improve\
                 their chances of success.')
     
-    def tab4_info(self):
+    def employee_info(self):
         
         st.info('**Potential Analysis:**\
                 Companies could analyze employee feedback to identify common themes\
@@ -90,7 +92,7 @@ class Info:
                 to improve employee satisfaction, reduce employee turnover, and create\
                 a positive workplace culture.')
     
-    def tab5_info(self):
+    def healthcare_info(self):
         
         st.info('**Potential Analysis:**\
                 Healthcare providers could analyze patient feedback to identify areas\

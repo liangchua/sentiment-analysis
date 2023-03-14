@@ -5,29 +5,34 @@ import base64
 import pandas as pd
 import streamlit as st
 import os
-import re
+import nltk
+import matplotlib.pyplot as plt
+import numpy as np
 
 from info import Info
 from models import SentimentAnalysisModels
 from PIL import Image
-from sklearn.model_selection import train_test_split
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk import FreqDist
+from wordcloud import WordCloud
 
+nltk.download('punkt')
+nltk.download('stopwords')
+stop_words = set(stopwords.words('english'))
 
 #%% Static Path
 
-# images path
+# images
 logo = Image.open('logo.png')
+mask = np.array(Image.open('wordcloud-shape.png'))
 
+# datasets
 PRODUCT_REVIEWS_PATH = os.path.join(os.getcwd(), 'product-reviews.csv')
 SOCMED_PATH = os.path.join(os.getcwd(), 'socmed-tweets.csv')
 POLITIC_PATH = os.path.join(os.getcwd(), 'politic-uk.csv')
 EMPLOYEE_PATH = os.path.join(os.getcwd(), 'employee-feedback.csv')
 HEALTHCARE_PATH = os.path.join(os.getcwd(), 'healthcare-depression.csv')
-
-# # resize images
-# with Image.open('bg6.png') as im:
-#     resized_im = im.resize((1920, 1080))
-#     resized_im.save('bg6-resized.png')
 
 
 #%% Functions
@@ -48,11 +53,16 @@ def add_bg(image_file):
             unsafe_allow_html=True
             )
 
+# text data cleaning
+def clean_text(text):
+    tokens = word_tokenize(text.lower())
+    cleaned_tokens = [token for token in tokens if token not in stop_words and token.isalpha()]
+    cleaned_text = " ".join(cleaned_tokens)
+    return cleaned_text
+
 # sentiment analysis models
 def models(selected_model, text):
-    if selected_model == 'DistilBERT':
-        label, score = SentimentAnalysisModels(text).HuggingFaceTransformer()
-    elif selected_model == 'TextBlob':
+    if selected_model == 'TextBlob':
         label, score = SentimentAnalysisModels(text).TextBlob()
     elif selected_model == 'Vader':
         label, score = SentimentAnalysisModels(text).Vader()
@@ -137,67 +147,70 @@ with st.sidebar:
     Info().overview()
 
 # add pagination
-tabs = st.tabs(['Testing','Product Review','Social Media','Politic','Employee',
-                'Healthcare'])
+tabs = st.tabs(['Analytics','Playground'])
 
 
-#%% Tab 1: Sentence
+#%% Tab 1: Sentiment Analysis with dataset
 
 with tabs[0]:
     
-    st.info('This tab allow user to test with different sentiment analysis algorithms.')
-    
-    text = st.text_area('Text to analyze')
-    
-    selected_model = st.radio('Pick a model',['TextBlob','Vader','Pattern','DistilBERT'], horizontal=True)
-    st.write(' ')
-    
-    if st.button('Run Analysis'):
-        with st.spinner('In progress ...'):
-            label, score = models(selected_model, text)
-            st.success('Done!')
-            st.write(label, score)
-    else:
-        st.info('Click "Run Analysis" to get sentiment analysis results')
-
-
-#%% Tab 2: Product Reviews
-
-with tabs[1]:
-    
     # try:
-        Info().tab1_info()
+        st.info('This tab allow you to upload a dataset to run the sentiment\
+                analysis or you may choose the sample datasets provided.')
         
-        options = st.selectbox('Choose to upload product review dataset or preview using sample dataset',
-                               ['upload dataset','sample dataset'])
+        # user selection (upload own dataset or preview with sample datasets)
+        options = st.selectbox('Choose to upload a dataset or preview using sample dataset',
+                               ['upload dataset','sample 1: product review',
+                                'sample 2: social media', 'sample 3: political',
+                                'sample 4: employee feedback', 'sample 5: healthcare'])
         
         if options == 'upload dataset':
             uploaded_data = st.file_uploader('Upload data here')
             data = pd.read_csv(uploaded_data, encoding='unicode_escape')
-        else:
+        # sample 1
+        elif options == 'sample 1: product review':
+            Info().prod_info()
             data = pd.read_csv(PRODUCT_REVIEWS_PATH, encoding='unicode_escape')
-            data = data[['brand','categories','reviews.text']]
-            sample_data, remain_data = train_test_split(data, train_size=1000, random_state=0)
-        
+            data = data[['reviews.text']]
+        # sample 2
+        elif options == 'sample 2: social media':
+            Info().socmed_info()
+            data = pd.read_csv(SOCMED_PATH, encoding='unicode_escape')
+            data = data[['text']]
+        # sample 3
+        elif options == 'sample 3: political':
+            Info().politic_info()
+            data = pd.read_csv(POLITIC_PATH)
+            data = data[['text']][:round(len(data)*0.2)]
+        # sample 4
+        elif options == 'sample 4: employee feedback':
+            Info().employee_info()
+            data = pd.read_csv(EMPLOYEE_PATH, encoding='unicode_escape')
+            data = data[['feedback']]
+        # sample 5
+        elif options == 'sample 5: healthcare':
+            Info().healthcare_info()
+            data = pd.read_csv(HEALTHCARE_PATH, encoding='unicode_escape')
+            data = data[['clean_text']]
         st.write(' ')
-        sample_select = st.radio('Choose a model for product reviews sentiment analysis',
-                                 ['TextBlob','Vader','Pattern','DistilBERT'], horizontal=True)
+        sample_select = st.radio('Choose a model',
+                                 ['TextBlob','Vader','Pattern'], horizontal=True)
         st.write(' ')
         
-        prod_text_fea = st.selectbox('Choose the text feature from product review dataset',
-                                     sample_data.columns)
+        prod_text_fea = st.selectbox('Choose the "text" column',
+                                     data.columns)
         
-        if st.button('Run Product Review Sentiment Analysis'):
+        if st.button('Run Sentiment Analysis'):
             with st.spinner('In progress ...'):
                 # run sentiment analysis
+                data = data[[prod_text_fea]]
+                data.columns = ['text']
                 labels = []
                 scores = []
-                for text in sample_data[prod_text_fea]:
+                temp_text = []
+                for text in data['text']:
                     # remove emoji
-                    text = re.sub('[\U00010000-\U0010ffff]', ' ', text)
-                    # remove all non-alphanumeric characters
-                    text = re.sub('[^0-9a-zA-Z]+', ' ', text)
-                    # run sentiment analysis
+                    text = clean_text(text)
                     label, score = models(sample_select, text)
                     labels.append(label)
                     scores.append(score)
@@ -205,13 +218,13 @@ with tabs[1]:
                     pass
                 
                 # add new features to dataset
-                sample_data['label'] = labels
-                sample_data['score'] = scores
+                data['label'] = labels
+                data['score'] = scores
                 
                 st.success('Done!')
                 
                 # total count by label
-                cnt_fea = sample_data['label'].value_counts()
+                cnt_fea = data['label'].value_counts()
                 
                 cnt_dic = {'POSITIVE':0, 'NEUTRAL':0, 'NEGATIVE':0}
                 
@@ -224,7 +237,7 @@ with tabs[1]:
                 cnt_fea.columns = ['label','count']
                 
                 with st.expander('Sentiment analysis results'):
-                    st.write(sample_data)
+                    st.write(data)
                 
                 with st.expander('Total count of each label'):
                     # display results in table form
@@ -244,134 +257,58 @@ with tabs[1]:
                         chart = chart.configure(background='#383838')
                         st.altair_chart(chart)
                 
-                with st.expander('Filter by other features'):
+                with st.expander('Wordcloud and top occurance words'):
+                    # get the clean text
+                    data['cleaned_text'] = data['text'].apply(clean_text)
                     
-                    agg_data = sample_data.groupby(['categories','label']).size().reset_index(name='count')
-                    chart2 = alt.Chart(agg_data).mark_bar().encode(
-                        y=alt.Y('categories:N'),
-                        x=alt.X('count:Q', stack='normalize'),
-                        color='label:N'
-                        ).properties(width=680)
-                    chart2 = chart2.configure(background='#383838')
-                    st.altair_chart(chart2)
-                    
-                    agg_data2 = sample_data.groupby(['brand','label']).size().reset_index(name='count')
-                    chart3 = alt.Chart(agg_data2).mark_bar().encode(
-                        y=alt.Y('brand:N'),
-                        x=alt.X('count:Q', stack='normalize'),
-                        color='label:N'
-                        ).properties(width=680)
-                    chart3 = chart3.configure(background='#383838')
-                    st.altair_chart(chart3)
-                
+                    # create word cloud for each label
+                    labels = ['POSITIVE','NEUTRAL','NEGATIVE']
+                    for label in labels:
+                        # plot wordcloud
+                        st.write(f"{label.title()} Sentiment Word Cloud")
+                        label_data = data[data['label'] == label]
+                        words = " ".join(list(label_data['cleaned_text']))
+                        freq_dist = FreqDist(word_tokenize(words))
+                        colors = ['white','yellow','red']
+                        cmap = plt.cm.colors.ListedColormap(colors)
+                        wordcloud = WordCloud(width=680, height=400, colormap=cmap,
+                                              background_color=None, mask=mask
+                                              ).generate_from_frequencies(freq_dist)
+                        fig, ax = plt.subplots(facecolor='none')
+                        ax.imshow(wordcloud, interpolation='lanczos')
+                        ax.axis('off')
+                        st.pyplot(fig)
+                        
+                        # display top 10 words
+                        st.write(f" Top 10 {label.title()} Words")
+                        word_df = pd.DataFrame.from_dict(freq_dist, orient='index', columns=['frequency'])
+                        word_df = word_df.sort_values(by='frequency', ascending=False)
+                        st.table(word_df.head(10))
+            
         else:
-            st.info('Click "Run Analysis" to get sentiment analysis results')
-        
-        
-        
+            st.info('Click "Run Sentiment Analysis" to get sentiment analysis results')
     # except:
     #     st.info('Please upload a dataset')
 
 
-#%% Tab 3: Social Media
+#%% Tab 2: Playground
 
-with tabs[2]:
+with tabs[1]:
     
-    try:
-        Info().tab2_info()
-        
-        options = st.selectbox('Choose to upload social media dataset or preview using sample dataset',
-                               ['upload dataset','sample dataset'])
-        
-        if options == 'upload dataset':
-            uploaded_data = st.file_uploader('Upload data here')
-            data = pd.read_csv(uploaded_data, encoding='unicode_escape')
-        else:
-            data = pd.read_csv(SOCMED_PATH, encoding='unicode_escape')
-            data = data[:50]
-        
-        st.write(' ')
-        sample_select = st.radio('Choose a model for social media sentiment analysis',
-                                 ['TextBlob','Vader','Pattern','DistilBERT'], horizontal=True)
-        st.write(' ')
-        st.table(data.head())
-    except:
-        st.info('Please upload a dataset')
-
-
-#%% Tab 4: Political 
-
-with tabs[3]:
+    st.info('This tab allow you to play with any sentences for sentiment analysis.')
     
-    try:
-        Info().tab3_info()
-        
-        options = st.selectbox('Choose to upload political dataset or preview using sample dataset',
-                               ['upload dataset','sample dataset'])
-        
-        if options == 'upload dataset':
-            uploaded_data = st.file_uploader('Upload data here')
-            data = pd.read_csv(uploaded_data, encoding='unicode_escape')
-        else:
-            data = pd.read_csv(POLITIC_PATH)
-            data = data[:50]
-        st.write(' ')
-        sample_select = st.radio('Choose a model for political sentiment analysis',
-                                 ['TextBlob','Vader','Pattern','DistilBERT'], horizontal=True)
-        st.write(' ')
-        st.table(data.head())
-    except:
-        st.info('Please upload a dataset')
-
-
-#%% Tab 5: Employee 
-
-with tabs[4]:
+    text = st.text_area('Type the text to analyze')
     
-    try:
-        Info().tab4_info()
-        
-        options = st.selectbox('Choose to upload employee feedback dataset or preview using sample dataset',
-                               ['upload dataset','sample dataset'])
-        
-        if options == 'upload dataset':
-            uploaded_data = st.file_uploader('Upload data here')
-            data = pd.read_csv(uploaded_data, encoding='unicode_escape')
-        else:
-            data = pd.read_csv(EMPLOYEE_PATH, encoding='unicode_escape')
-            data = data[:50]
-        st.write(' ')
-        sample_select = st.radio('Choose a model for employee feedback sentiment analysis',
-                                 ['TextBlob','Vader','Pattern','DistilBERT'], horizontal=True)
-        st.write(' ')
-        st.table(data.head())
-    except:
-        st.info('Please upload a dataset')
-
-
-#%% Tab 6: Healthcare
-
-with tabs[5]:
+    selected_model = st.radio('Pick a model',['TextBlob','Vader','Pattern'], horizontal=True)
+    st.write(' ')
     
-    try:
-        Info().tab5_info()
-        
-        options = st.selectbox('Choose to upload healthcare dataset or preview using sample dataset',
-                               ['upload dataset','sample dataset'])
-        
-        if options == 'upload dataset':
-            uploaded_data = st.file_uploader('Upload data here')
-            data = pd.read_csv(uploaded_data, encoding='unicode_escape')
-        else:
-            data = pd.read_csv(HEALTHCARE_PATH, encoding='unicode_escape')
-            data = data[:50]
-        st.write(' ')
-        sample_select = st.radio('Choose a model for healthcare sentiment analysis',
-                                 ['TextBlob','Vader','Pattern','DistilBERT'], horizontal=True)
-        st.write(' ')
-        st.table(data.head())
-    except:
-        st.info('Please upload a dataset')
+    if st.button('Run Analysis'):
+        with st.spinner('In progress ...'):
+            label, score = models(selected_model, text)
+            st.success('Done!')
+            st.write(label, score)
+    else:
+        st.info('Click "Run Analysis" to get sentiment analysis results')
 
 
 

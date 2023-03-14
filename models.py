@@ -1,6 +1,6 @@
 # Libraries
 
-from transformers import pipeline
+# from transformers import pipeline
 from textblob import TextBlob
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from pattern.en import sentiment
@@ -12,16 +12,6 @@ class SentimentAnalysisModels:
     
     def __init__(self, text):
         self.text = text
-    
-    def HuggingFaceTransformer(self):
-        nlp = pipeline('sentiment-analysis')
-        result = nlp(self.text)
-        
-        if result[0]['score'] >= -0.1 and result[0]['score'] <= 0.1:
-            label = 'NEUTRAL'
-            return label, result[0]['score']
-        else:
-            return result[0]['label'], result[0]['score']
     
     def TextBlob(self):
         blob = TextBlob(self.text)
@@ -63,5 +53,15 @@ class SentimentAnalysisModels:
             label = 'NEUTRAL'
         
         return label, result[0]
+    
+    # def HuggingFaceTransformer(self):
+    #     nlp = pipeline('sentiment-analysis')
+    #     result = nlp(self.text)
+        
+    #     if result[0]['score'] >= -0.1 and result[0]['score'] <= 0.1:
+    #         label = 'NEUTRAL'
+    #         return label, result[0]['score']
+    #     else:
+    #         return result[0]['label'], result[0]['score']
 
 
