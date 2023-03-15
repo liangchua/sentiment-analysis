@@ -44,7 +44,7 @@ A project of sentiment analysis applications in various fields, such as product 
 
 - this is the preview of the sentiment analysis streamlit apps created, you may refer to "results" folder for more. 
 
-![Image1](results/page1-1-sample1.png)
+![Image1](results/page1-1-sample-1.png)
 ![Image2](results/page1-results-table.png)
 ![Image3](results/page1-total-count-by-label.png)
 ![Image4](results/page1-wordcloud-positive.png)
