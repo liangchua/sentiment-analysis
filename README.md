@@ -12,6 +12,8 @@
 
 A project of sentiment analysis applications in various fields, such as product overview, social media analysis, political sentiment, employee feedback, and healthcare analysis, with several options of pretrained models such as TextBlob, Vader and Pattern. 
 
+&nbsp;
+
 ### DESCRIPTION OF UPLOADED FILES
 
 ### "code" folder
@@ -35,6 +37,8 @@ A project of sentiment analysis applications in various fields, such as product 
 ### "results" folder
 
 - contained only the screenshot of each page created 
+
+&nbsp;
 
 ### THE APP
 
