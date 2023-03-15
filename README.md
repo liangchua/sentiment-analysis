@@ -57,6 +57,8 @@ A project of sentiment analysis applications in various fields, such as product 
 
 ![Image6](results/page1-wordcloud-negative.png)
 
+![Image7](results/page2-playground.png)
+
 &nbsp;
 
 Thank you for reading my work!!! I appreciate your time and attention.
