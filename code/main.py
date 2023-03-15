@@ -2,24 +2,25 @@
 
 import altair as alt
 import base64
+import matplotlib.pyplot as plt
+import nltk
+import numpy as np
+import os
 import pandas as pd
 import streamlit as st
-import os
-import nltk
-import matplotlib.pyplot as plt
-import numpy as np
 
 from info import Info
 from models import SentimentAnalysisModels
-from PIL import Image
 from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
 from nltk import FreqDist
+from nltk.tokenize import word_tokenize
+from PIL import Image
 from wordcloud import WordCloud
 
 nltk.download('punkt')
 nltk.download('stopwords')
 stop_words = set(stopwords.words('english'))
+
 
 #%% Static Path
 
@@ -69,6 +70,7 @@ def models(selected_model, text):
     elif selected_model == 'Pattern':
         label, score = SentimentAnalysisModels(text).Pattern()
     return label, score
+
 
 #%% User Interface (streamlit apps)
 
@@ -135,9 +137,9 @@ st.markdown(
 # set page header with logo
 st.markdown("""# 👍😍😑😡👎 Sentiment Analysis""")
 
-# set sidebar header
+# set sidebar
 with st.sidebar:
-    
+    # add logo
     sidecols = st.columns(3)
     with sidecols[1]:
         st.image(logo, width=90)
@@ -197,9 +199,11 @@ with tabs[0]:
                                  ['TextBlob','Vader','Pattern'], horizontal=True)
         st.write(' ')
         
+        # ask user input "choose text column"
         prod_text_fea = st.selectbox('Choose the "text" column',
                                      data.columns)
         
+        # add button "click to run the analysis"
         if st.button('Run Sentiment Analysis'):
             with st.spinner('In progress ...'):
                 # run sentiment analysis
@@ -211,6 +215,7 @@ with tabs[0]:
                 for text in data['text']:
                     # clean text
                     text = clean_text(text)
+                    # get results
                     label, score = models(sample_select, text)
                     labels.append(label)
                     scores.append(score)
@@ -223,7 +228,6 @@ with tabs[0]:
                 
                 # total count by label
                 cnt_fea = data['label'].value_counts()
-                
                 cnt_dic = {'POSITIVE':0, 'NEUTRAL':0, 'NEGATIVE':0}
                 
                 for key in cnt_dic.keys():
@@ -235,10 +239,11 @@ with tabs[0]:
                 cnt_fea.columns = ['label','count']
                 
                 with st.expander('Sentiment analysis results'):
+                    # display results in table form
                     st.write(data)
                 
                 with st.expander('Total count of each label'):
-                    # display results in table form
+                    # display total count of each label in table form
                     st.table(cnt_fea)
                     
                     cnt_cols = st.columns([1,3,1])
@@ -297,15 +302,19 @@ with tabs[1]:
     
     st.info('This tab allow you to play with any sentences for sentiment analysis.')
     
+    # get user input in text
     text = st.text_area('Type the text to analyze')
     
+    # get user input of selected model
     selected_model = st.radio('Pick a model',['TextBlob','Vader','Pattern'], horizontal=True)
     st.write(' ')
     
     if st.button('Run Analysis'):
         with st.spinner('In progress ...'):
+            # get sentiment analysis results
             label, score = models(selected_model, text)
             st.success('Done!')
+            # display results
             st.write('Sentiment Label: ', label)
             st.write('Score: ', score)
     else:

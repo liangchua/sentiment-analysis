@@ -1,9 +1,9 @@
 # Libraries
 
-# from transformers import pipeline
-from textblob import TextBlob
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from pattern.en import sentiment
+from textblob import TextBlob
+# from transformers import pipeline
 
 
 #%% Pre-trained sentiment analysis models
