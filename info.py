@@ -64,7 +64,7 @@ class Info:
     
     def politic_info(self):
         
-        st.info('**Potential Analysis**\
+        st.info('**Potential Analysis:**\
                 Political campaigns or organizations could analyze public sentiment\
                 about political candidates or issues on social media to identify\
                 potential issues or opportunities for engagement. They could use\

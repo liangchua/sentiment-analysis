@@ -154,7 +154,7 @@ tabs = st.tabs(['Analytics','Playground'])
 
 with tabs[0]:
     
-    # try:
+    try:
         st.info('This tab allow you to upload a dataset to run the sentiment\
                 analysis or you may choose the sample datasets provided.')
         
@@ -209,7 +209,7 @@ with tabs[0]:
                 scores = []
                 temp_text = []
                 for text in data['text']:
-                    # remove emoji
+                    # clean text
                     text = clean_text(text)
                     label, score = models(sample_select, text)
                     labels.append(label)
@@ -220,8 +220,6 @@ with tabs[0]:
                 # add new features to dataset
                 data['label'] = labels
                 data['score'] = scores
-                
-                st.success('Done!')
                 
                 # total count by label
                 cnt_fea = data['label'].value_counts()
@@ -284,11 +282,13 @@ with tabs[0]:
                         word_df = pd.DataFrame.from_dict(freq_dist, orient='index', columns=['frequency'])
                         word_df = word_df.sort_values(by='frequency', ascending=False)
                         st.table(word_df.head(10))
+                
+                st.success('Done!')
             
         else:
             st.info('Click "Run Sentiment Analysis" to get sentiment analysis results')
-    # except:
-    #     st.info('Please upload a dataset')
+    except:
+        st.info('Please upload a dataset')
 
 
 #%% Tab 2: Playground
@@ -306,7 +306,8 @@ with tabs[1]:
         with st.spinner('In progress ...'):
             label, score = models(selected_model, text)
             st.success('Done!')
-            st.write(label, score)
+            st.write('Sentiment Label: ', label)
+            st.write('Score: ', score)
     else:
         st.info('Click "Run Analysis" to get sentiment analysis results')
 
