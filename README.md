@@ -31,6 +31,7 @@ A project of sentiment analysis applications in various fields, such as product 
 |models.py|The class contained all the sentiment analysis pretrained models|
 |politic-uk.csv|The political comments dataset|
 |product-reviews.csv|The product reviews dataset|
+|requirements.txt|The python packages required to run the streamlit app|
 |socmed-tweets.csv|The social media comments dataset|
 |wordcloud-shape.png|The wordcloud background shape|
 
