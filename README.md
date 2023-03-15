@@ -53,10 +53,6 @@ A project of sentiment analysis applications in various fields, such as product 
 
 ![Image4](results/page1-wordcloud-positive.png)
 
-![Image5](results/page1-wordcloud-neutral.png)
-
-![Image6](results/page1-wordcloud-negative.png)
-
 ![Image7](results/page2-playground.png)
 
 &nbsp;
